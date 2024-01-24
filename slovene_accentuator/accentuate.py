@@ -85,46 +85,58 @@ class SloveneAccentuator:
         # Format data for accentuate_word function; the format is the following: [['besedišči', '', 'Ncnpi', 'besedišči'], ]
         self.content = [[el[0], '', el[1], el[0]] for el in list_of_forms]
 
+        dummy_forms = 0
+        while len(list_of_forms) < 3:
+            list_of_forms.append(["Dummy", "Somei"])
+            dummy_forms += 1
+
         # use environment variables and models to accentuate words
         # data = Data('l', shuffle_all_inputs=False)
-        location_accented_words, accented_words = self.data.accentuate_word(self.content, self.letter_location_model,
-                                                                            self.syllable_location_model,
-                                                                            self.syllabled_letters_location_model,
-                                                                            self.letter_location_co_model,
-                                                                            self.syllable_location_co_model,
-                                                                            self.syllabled_letters_location_co_model,
-                                                                            self.letter_type_model, self.syllable_type_model,
-                                                                            self.syllabled_letter_type_model,
-                                                                            self.letter_type_co_model, self.syllable_type_co_model,
-                                                                            self.syllabled_letter_type_co_model,
-                                                                            self.dictionary, self.max_word, self.max_num_vowels, self.vowels,
-                                                                            self.accented_vowels, self.feature_dictionary,
-                                                                            self.syllable_dictionary,
-                                                                            self.data_location_l,
-                                                                            self.data_location_s,
-                                                                            self.data_location_sl,
-                                                                            self.data_location_l_reverse,
-                                                                            self.data_location_s_reverse,
-                                                                            self.data_location_sl_reverse,
-                                                                            self.data_type_l,
-                                                                            self.data_type_s,
-                                                                            self.data_type_sl,
-                                                                            self.data_type_l_reverse,
-                                                                            self.data_type_s_reverse,
-                                                                            self.data_type_sl_reverse
-                                                                            )
+        try:
+            location_accented_words, accented_words = self.data.accentuate_word(self.content, self.letter_location_model,
+                                                                                self.syllable_location_model,
+                                                                                self.syllabled_letters_location_model,
+                                                                                self.letter_location_co_model,
+                                                                                self.syllable_location_co_model,
+                                                                                self.syllabled_letters_location_co_model,
+                                                                                self.letter_type_model, self.syllable_type_model,
+                                                                                self.syllabled_letter_type_model,
+                                                                                self.letter_type_co_model, self.syllable_type_co_model,
+                                                                                self.syllabled_letter_type_co_model,
+                                                                                self.dictionary, self.max_word, self.max_num_vowels, self.vowels,
+                                                                                self.accented_vowels, self.feature_dictionary,
+                                                                                self.syllable_dictionary,
+                                                                                self.data_location_l,
+                                                                                self.data_location_s,
+                                                                                self.data_location_sl,
+                                                                                self.data_location_l_reverse,
+                                                                                self.data_location_s_reverse,
+                                                                                self.data_location_sl_reverse,
+                                                                                self.data_type_l,
+                                                                                self.data_type_s,
+                                                                                self.data_type_sl,
+                                                                                self.data_type_l_reverse,
+                                                                                self.data_type_s_reverse,
+                                                                                self.data_type_sl_reverse
+                                                                                )
 
-        # Convert placeholder accentuation symbols to actual accentuation symbols
-        accented_words_with_correct_accentuation_symbols = []
-        for word in accented_words:
-            accented_words_with_correct_accentuation_symbols.append(self.convert_to_correct_accentuation(word))
+            # Convert placeholder accentuation symbols to actual accentuation symbols
+            accented_words_with_correct_accentuation_symbols = []
+            for word in accented_words:
+                accented_words_with_correct_accentuation_symbols.append(self.convert_to_correct_accentuation(word))
 
-        final_list = []
-        for index, form_msd in enumerate(list_of_forms):
-            form, msd = form_msd
-            accentuated_form = accented_words_with_correct_accentuation_symbols[index]
-            final_list.append([form, msd, accentuated_form])
+            final_list = []
+            for index, form_msd in enumerate(list_of_forms):
+                form, msd = form_msd
+                accentuated_form = accented_words_with_correct_accentuation_symbols[index]
+                final_list.append([form, msd, accentuated_form])
 
-        tf.keras.backend.clear_session()
-        gc.collect()
+            tf.keras.backend.clear_session()
+            gc.collect()
+        except:
+            return [[sublist[0], sublist[1], sublist[0]] for sublist in list_of_forms]
+        
+        if 0 < dummy_forms:
+            final_list = final_list[:len(final_list) - dummy_forms]
+
         return final_list

@@ -1289,7 +1289,7 @@ class Data:
         x = Dense(nn_output_dim, activation='sigmoid')(x)
 
         letter_location_model = Model(inputs=[conv_input, othr_input], outputs=x)
-        opt = tf.optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        opt = tf.optimizers.Adam(learning_rate=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
         letter_location_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
 
 
@@ -1320,7 +1320,7 @@ class Data:
         x = Dense(nn_output_dim, activation='sigmoid')(x)
 
         syllable_location_model = Model(inputs=[conv_input, othr_input], outputs=x)
-        opt = tf.optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        opt = tf.optimizers.Adam(learning_rate=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
         syllable_location_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
         syllable_location_model.load_weights(syllables_path)
 
@@ -1349,7 +1349,7 @@ class Data:
         x = Dense(nn_output_dim, activation='sigmoid')(x)
 
         syllabled_letters_location_model = Model(inputs=[conv_input, othr_input], outputs=x)
-        opt = tf.optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        opt = tf.optimizers.Adam(learning_rate=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
         syllabled_letters_location_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
         syllabled_letters_location_model.load_weights(syllabled_letters_path)
 
@@ -1382,7 +1382,7 @@ class Data:
         x = Dense(nn_output_dim, activation='sigmoid')(x)
 
         letter_type_model = Model(inputs=[conv_input, othr_input], outputs=x)
-        opt = tf.optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        opt = tf.optimizers.Adam(learning_rate=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
         letter_type_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
         letter_type_model.load_weights(letters_path)
 
@@ -1405,7 +1405,7 @@ class Data:
         x = Dense(nn_output_dim, activation='sigmoid')(x)
 
         syllable_type_model = Model(inputs=[conv_input, othr_input], outputs=x)
-        opt = tf.optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        opt = tf.optimizers.Adam(learning_rate=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
         syllable_type_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
         syllable_type_model.load_weights(syllables_path)
 
@@ -1454,7 +1454,7 @@ class Data:
                                                                         input_words, vowels, accented_vowels,
                                                                         feature_dictionary, 'who cares')
         generator = data_location_l._letter_generator(x, x_other_features, fake_y, batch_size, accented_vowels)
-        letter_location_predictions = letter_location_model.predict_generator(generator, len(x) // (batch_size) + 1)
+        letter_location_predictions = letter_location_model.predict(generator, verbose=0, steps=len(x) // (batch_size) + 1)
 
         # DATA_LOCATION_S
         x, x_other_features, fake_y = data_location_s._generate_x_and_y(syllable_dictionary, max_word,
@@ -1464,8 +1464,8 @@ class Data:
         eye = np.eye(len(syllable_dictionary), dtype=int)
         generator = data_location_s._syllable_generator(x, x_other_features, fake_y, batch_size, eye,
                                                         accented_vowels)
-        syllable_location_predictions = syllable_location_model.predict_generator(generator,
-                                                                                  len(x) // (batch_size) + 1)
+        syllable_location_predictions = syllable_location_model.predict(generator, verbose=0,
+                                                                                  steps=len(x) // (batch_size) + 1)
 
         # DATA_LOCATION_SL
         x, x_other_features, fake_y = data_location_sl._generate_x_and_y(syllable_dictionary, max_word,
@@ -1478,8 +1478,8 @@ class Data:
                                                                                            dictionary, vowels)
         generator = data_location_sl._syllable_generator(x, x_other_features, fake_y, batch_size,
                                                          syllable_letters_translator, accented_vowels)
-        syllabled_letters_location_predictions = syllabled_letters_location_model.predict_generator(generator,
-                                                                                                    len(x) // (
+        syllabled_letters_location_predictions = syllabled_letters_location_model.predict(generator, verbose=0,
+                                                                                                    steps=len(x) // (
                                                                                                         batch_size) + 1)
 
         ############## CORRECT ORDER INPUT ##############
@@ -1490,8 +1490,8 @@ class Data:
                                                                                 'who cares')
         generator = data_location_l_reverse._letter_generator(x, x_other_features, fake_y, batch_size,
                                                               accented_vowels)
-        letter_location_co_predictions = letter_location_co_model.predict_generator(generator,
-                                                                                    len(x) // (batch_size) + 1)
+        letter_location_co_predictions = letter_location_co_model.predict(generator, verbose=0,
+                                                                                    steps=len(x) // (batch_size) + 1)
 
         letter_location_co_predictions = data_location_l_reverse.reverse_predictions(letter_location_co_predictions,
                                                                                      input_words, vowels)
@@ -1504,8 +1504,8 @@ class Data:
         eye = np.eye(len(syllable_dictionary), dtype=int)
         generator = data_location_s_reverse._syllable_generator(x, x_other_features, fake_y, batch_size, eye,
                                                                 accented_vowels)
-        syllable_location_co_predictions = syllable_location_co_model.predict_generator(generator,
-                                                                                        len(x) // (batch_size) + 1)
+        syllable_location_co_predictions = syllable_location_co_model.predict(generator, verbose=0,
+                                                                                        steps=len(x) // (batch_size) + 1)
 
         syllable_location_co_predictions = data_location_s_reverse.reverse_predictions(
             syllable_location_co_predictions, input_words, vowels)
@@ -1522,8 +1522,8 @@ class Data:
                                                                                                    vowels)
         generator = data_location_sl_reverse._syllable_generator(x, x_other_features, fake_y, batch_size,
                                                                  syllable_letters_translator, accented_vowels)
-        syllabled_letters_location_co_predictions = syllabled_letters_location_co_model.predict_generator(generator,
-                                                                                                          len(
+        syllabled_letters_location_co_predictions = syllabled_letters_location_co_model.predict(generator, verbose=0,
+                                                                                                          steps=len(
                                                                                                               x) // (
                                                                                                               batch_size) + 1)
 
@@ -1592,8 +1592,8 @@ class Data:
                                                                     input_words, vowels, accented_vowels,
                                                                     feature_dictionary, 'who cares')
         generator = data_type_l._letter_generator(x, x_other_features, location_y, batch_size, accented_vowels)
-        letter_type_predictions = letter_type_model.predict_generator(generator,
-                                                                      accentuation_length // (batch_size) + 1)
+        letter_type_predictions = letter_type_model.predict(generator, verbose=0,
+                                                                      steps=accentuation_length // (batch_size) + 1)
 
         # DATA_TYPE_S
         x, x_other_features, fake_y = data_type_s._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels,
@@ -1603,8 +1603,8 @@ class Data:
         eye = np.eye(len(syllable_dictionary), dtype=int)
         generator = data_type_s._syllable_generator(x, x_other_features, location_y, batch_size, eye,
                                                     accented_vowels)
-        syllable_type_predictions = syllable_type_model.predict_generator(generator,
-                                                                          accentuation_length // (batch_size) + 1)
+        syllable_type_predictions = syllable_type_model.predict(generator, verbose=0,
+                                                                          steps=accentuation_length // (batch_size) + 1)
 
         # DATA_TYPE_SL --> #data = Data('sl', shuffle_all_inputs=False, accent_classification=True, convert_multext=False)
         x, x_other_features, fake_y = data_type_sl._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels,
@@ -1616,8 +1616,8 @@ class Data:
                                                                                        dictionary, vowels)
         generator = data_type_sl._syllable_generator(x, x_other_features, location_y, batch_size,
                                                      syllable_letters_translator, accented_vowels)
-        syllabled_letter_type_predictions = syllabled_letter_type_model.predict_generator(generator,
-                                                                                          accentuation_length // batch_size + 1)
+        syllabled_letter_type_predictions = syllabled_letter_type_model.predict(generator, verbose=0,
+                                                                                          steps=accentuation_length // batch_size + 1)
 
         ############## CORRECT ORDER INPUT ##############
         location_y = data_type_sl.reverse_predictions(location_y, input_words, vowels)
@@ -1628,8 +1628,8 @@ class Data:
                                                                             feature_dictionary, 'who cares')
         generator = data_type_l_reverse._letter_generator(x, x_other_features, location_y, batch_size,
                                                           accented_vowels)
-        letter_type_co_predictions = letter_type_co_model.predict_generator(generator,
-                                                                            accentuation_length // (batch_size) + 1)
+        letter_type_co_predictions = letter_type_co_model.predict(generator, verbose=0,
+                                                                            steps=accentuation_length // (batch_size) + 1)
 
         data_type_l_reverse.reorder_correct_direction_inputs(letter_type_co_predictions, location_y)
 
@@ -1641,7 +1641,7 @@ class Data:
         eye = np.eye(len(syllable_dictionary), dtype=int)
         generator = data_type_s_reverse._syllable_generator(x, x_other_features, location_y, batch_size, eye,
                                                             accented_vowels)
-        syllable_type_co_predictions = syllable_type_co_model.predict_generator(generator, accentuation_length // (
+        syllable_type_co_predictions = syllable_type_co_model.predict(generator, verbose=0, steps=accentuation_length // (
             batch_size) + 1)
 
         data_type_s_reverse.reorder_correct_direction_inputs(syllable_type_co_predictions, location_y)
@@ -1657,8 +1657,8 @@ class Data:
                                                                                                dictionary, vowels)
         generator = data_type_sl_reverse._syllable_generator(x, x_other_features, location_y, batch_size,
                                                              syllable_letters_translator, accented_vowels)
-        syllabled_letter_type_co_predictions = syllabled_letter_type_co_model.predict_generator(generator,
-                                                                                                accentuation_length // batch_size + 1)
+        syllabled_letter_type_co_predictions = syllabled_letter_type_co_model.predict(generator, verbose=0,
+                                                                                                steps=accentuation_length // batch_size + 1)
 
         data_type_sl_reverse.reorder_correct_direction_inputs(syllabled_letter_type_co_predictions, location_y)
 

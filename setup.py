@@ -11,7 +11,7 @@ with open("README.md", "r", encoding="utf-8") as readme_file:
 
 setup(
     name='slovene_accentuator',
-    version='0.0.7',
+    version='0.0.10',
     author = "Peter Pisljar",
     description = "slovene accentuator",
     long_description=README,
